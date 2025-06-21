@@ -11,6 +11,7 @@ class MealPlanApp {
         await this.loadData();
         this.setupEventListeners();
         this.populateFields();
+        this.hideExpiredCards(); // Hide cards past current date
     }
 
     async loadData() {
@@ -424,11 +425,58 @@ class MealPlanApp {
             }, 300);
         }, 3000);
     }
+
+    hideExpiredCards() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set to beginning of today for accurate comparison
+        
+        document.querySelectorAll('.card').forEach(card => {
+            const dateElement = card.querySelector('.date');
+            if (!dateElement) return;
+            
+            const dateText = dateElement.textContent.trim();
+            const cardDate = this.parseCardDate(dateText);
+            
+            if (cardDate && cardDate < today) {
+                // Hide expired card with class
+                card.classList.add('expired');
+                console.log(`Hidden expired card: ${dateText}`);
+            } else {
+                // Show current/future card
+                card.classList.remove('expired');
+            }
+        });
+    }
+
+    parseCardDate(dateText) {
+        // Parse dates like "Saturday - 6/21", "Sunday - 6/22", etc.
+        const dateMatch = dateText.match(/(\d{1,2})\/(\d{1,2})$/);
+        if (!dateMatch) return null;
+        
+        const month = parseInt(dateMatch[1]) - 1; // JavaScript months are 0-indexed
+        const day = parseInt(dateMatch[2]);
+        
+        // Use current year
+        const currentYear = new Date().getFullYear();
+        const cardDate = new Date(currentYear, month, day);
+        
+        return cardDate;
+    }
 }
 
 // Initialize the app when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    new MealPlanApp();
+    const app = new MealPlanApp();
+    
+    // Check for expired cards when user returns to the page
+    window.addEventListener('focus', () => {
+        app.hideExpiredCards();
+    });
+    
+    // Also check once daily at midnight (if page stays open)
+    setInterval(() => {
+        app.hideExpiredCards();
+    }, 60000 * 60); // Check every hour
 });
 
 // Add keyboard shortcuts info

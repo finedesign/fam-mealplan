@@ -48,6 +48,13 @@ header h1 {
     border: 1px solid #e9ecef;
     width: 100%;
     box-sizing: border-box; /* Ensure padding is included in width */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth hide/show transition */
+}
+
+.card.expired {
+    opacity: 0.3;
+    transform: scale(0.95);
+    pointer-events: none;
 }
 
 .date {
