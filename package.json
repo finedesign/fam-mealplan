@@ -1,0 +1,19 @@
+{
+  "name": "family-meal-plan",
+  "version": "1.0.0",
+  "description": "A simple family meal planning application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": ["meal-planning", "family", "food"],
+  "author": "",
+  "license": "MIT"
+} 
