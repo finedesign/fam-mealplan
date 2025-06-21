@@ -11,12 +11,14 @@ body {
     line-height: 1.5;
     padding: 0;
     margin: 0;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .container {
+    width: 100%;
     max-width: 400px;
     margin: 0 auto;
-    padding: 20px 16px;
+    padding: 20px 12px; /* Reduced horizontal padding for mobile */
 }
 
 header {
@@ -41,9 +43,11 @@ header h1 {
 .card {
     background: white;
     border-radius: 12px;
-    padding: 20px;
+    padding: 16px; /* Reduced padding for mobile */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #e9ecef;
+    width: 100%;
+    box-sizing: border-box; /* Ensure padding is included in width */
 }
 
 .date {
@@ -173,6 +177,28 @@ header h1 {
 @keyframes error-fade {
     0% { background-color: #f8d7da; }
     100% { background-color: transparent; }
+}
+
+/* Mobile-first styles (already applied above) */
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .container {
+        padding: 16px 8px; /* Even less padding on very small screens */
+    }
+    
+    .card {
+        padding: 12px; /* Further reduced padding */
+        margin: 0; /* Remove any margins */
+    }
+    
+    .meal-details {
+        padding-left: 6px; /* Reduce nested padding */
+    }
+    
+    .meal {
+        padding-left: 8px; /* Reduce meal padding */
+    }
 }
 
 /* Responsive design */
