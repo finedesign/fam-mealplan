@@ -18,14 +18,28 @@ class MealPlanApp {
             const response = await fetch('/api/data');
             if (response.ok) {
                 this.data = await response.json();
-            } else {
-                console.warn('Could not load data, using defaults');
-                this.data = this.getDefaultData();
+                console.log('Loaded data from server');
+                return;
             }
         } catch (error) {
-            console.error('Error loading data:', error);
-            this.data = this.getDefaultData();
+            console.warn('Server not available, trying localStorage');
         }
+        
+        // Fallback to localStorage for static deployments
+        const savedData = localStorage.getItem('mealPlanData');
+        if (savedData) {
+            try {
+                this.data = JSON.parse(savedData);
+                console.log('Loaded data from localStorage');
+                return;
+            } catch (error) {
+                console.warn('Invalid localStorage data, using defaults');
+            }
+        }
+        
+        // Final fallback to defaults
+        console.log('Using default data');
+        this.data = this.getDefaultData();
     }
 
     getDefaultData() {
@@ -337,17 +351,35 @@ class MealPlanApp {
             }, 200);
 
         } catch (error) {
-            console.error('Error saving data:', error);
-            element.classList.remove('saving');
+            console.warn('Server save failed, using localStorage:', error);
             
-            // Visual feedback for save error
-            element.classList.add('error');
-            setTimeout(() => {
-                element.classList.remove('error');
-            }, 2000);
+            // Fallback to localStorage for static deployments
+            try {
+                localStorage.setItem('mealPlanData', JSON.stringify(this.data));
+                console.log('Data saved to localStorage');
+                
+                // Visual feedback for successful save
+                setTimeout(() => {
+                    element.classList.remove('saving');
+                    element.classList.add('success');
+                    setTimeout(() => {
+                        element.classList.remove('success');
+                    }, 1000);
+                }, 200);
+                
+            } catch (localError) {
+                console.error('localStorage save failed:', localError);
+                element.classList.remove('saving');
+                
+                // Visual feedback for save error
+                element.classList.add('error');
+                setTimeout(() => {
+                    element.classList.remove('error');
+                }, 2000);
 
-            // Show user-friendly error message
-            this.showNotification('Failed to save changes. Please try again.', 'error');
+                // Show user-friendly error message
+                this.showNotification('Failed to save changes. Please try again.', 'error');
+            }
         }
     }
 
